@@ -153,17 +153,13 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, sections, onRateSect
                             </span>
                           </div>
                         </Tooltip>
-                        <Tooltip content="Campus">
+                        <Tooltip content="Campus y Horario">
                           <div className="flex items-center text-sm">
                             <MapPin size={16} className="mr-2 text-green-500" />
                             <span className={darkMode ? 'text-gray-300' : 'text-gray-600'}>
                               {section.campus}
                             </span>
-                          </div>
-                        </Tooltip>
-                        <Tooltip content="Horario">
-                          <div className="flex items-center text-sm">
-                            <Clock size={16} className="mr-2 text-purple-500" />
+                            <Clock size={16} className="ml-4 mr-2 text-purple-500" />
                             <span className={darkMode ? 'text-gray-300' : 'text-gray-600'}>
                               {section.schedule}
                             </span>
@@ -174,24 +170,23 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, sections, onRateSect
                   </div>
 
                   <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <div className="flex items-center justify-between">
-                      <Tooltip content="Profesor">
+                    <div className="flex flex-col space-y-3">
+                      <div className="flex items-center justify-between">
                         <div className="flex items-center">
                           <Star size={16} className="mr-2 text-yellow-500" />
                           <span className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                             {section.professor}
                           </span>
-                          {rating && (
-                            <Badge
-                              variant={rating.rating >= 8 ? 'success' : rating.rating >= 6 ? 'warning' : 'error'}
-                              size="sm"
-                              className="ml-2"
-                            >
-                              {rating.rating.toFixed(1)}
-                            </Badge>
-                          )}
                         </div>
-                      </Tooltip>
+                        {rating && (
+                          <Badge
+                            variant={rating.rating >= 8 ? 'success' : rating.rating >= 6 ? 'warning' : 'error'}
+                            size="sm"
+                          >
+                            {rating.rating.toFixed(1)}
+                          </Badge>
+                        )}
+                      </div>
                       <div className="flex space-x-2">
                         <Button
                           size="sm"
@@ -200,6 +195,7 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, sections, onRateSect
                             id: section.professor,
                             name: section.professor
                           })}
+                          className="flex-1"
                         >
                           <Search size={14} className="mr-1" />
                           Detalles
@@ -208,6 +204,7 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, sections, onRateSect
                           size="sm"
                           variant="primary"
                           onClick={() => handleRateClick(section.id, section.professor)}
+                          className="flex-1"
                         >
                           <Star size={14} className="mr-1" />
                           Calificar

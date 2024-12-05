@@ -10,7 +10,7 @@ import FAQ from './components/FAQ';
 import Forum from './components/Forum/Forum';
 import { Course, Section } from './types';
 import { fetchCourseData } from './api/courseData';
-import { removeDiacritics } from './utils/stringUtils';
+import { normalizeText } from './utils/stringUtils';
 import { auth } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { Toaster } from 'react-hot-toast';
@@ -96,18 +96,17 @@ function App() {
   }, []);
 
   const filteredSections = useMemo(() => {
-    const normalizedQuery = removeDiacritics(searchQuery.toLowerCase());
+    const normalizedQuery = normalizeText(searchQuery);
     
     return allSections.filter(section => {
       const course = allCourses.find(c => c.id === section.courseId);
       
-      const matchesSearch = !normalizedQuery || 
-        removeDiacritics(section.professor.toLowerCase()).includes(normalizedQuery) ||
-        removeDiacritics(section.nrc.toLowerCase()).includes(normalizedQuery) ||
-        (course && (
-          removeDiacritics(course.name.toLowerCase()).includes(normalizedQuery) ||
-          removeDiacritics(course. code.toLowerCase()).includes(normalizedQuery)
-        ));
+      const matchesSearch = !normalizedQuery || [
+        normalizeText(section.professor),
+        normalizeText(section.nrc),
+        course && normalizeText(course.name),
+        course && normalizeText(course.code)
+      ].some(text => text && text.includes(normalizedQuery));
 
       const matchesCampus = !selectedCampus || section.campus === selectedCampus;
       
@@ -185,7 +184,7 @@ function App() {
   };
 
   return (
-    <div className={`min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gray-100'}`}>
+    <div className={`min-h-screen flex flex-col ${darkMode ? 'dark bg-gray-900' : 'bg-gray-100'}`}>
       <Toaster position="top-center" />
       
       <Navigation
@@ -206,7 +205,7 @@ function App() {
         handleForumClick={handleForumClick}
       />
       
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow">
         <div className="flex flex-col items-center">
           {!showFAQ && !showForum && (
             <SearchBar 
@@ -258,7 +257,7 @@ function App() {
         </div>
       </main>
       
-      <footer className={`${darkMode ? 'bg-gray-800' : 'bg-white'} shadow-md mt-8`}>
+      <footer className={`${darkMode ? 'bg-gray-800' : 'bg-white'} shadow-md mt-auto`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 text-center text-gray-500">
           © 2024 Nicebott. Todos los derechos reservados.
         </div>
