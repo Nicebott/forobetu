@@ -7,6 +7,7 @@ export interface Topic {
   creador: string;
   creadorNombre: string;
   creadoEn: Timestamp;
+  mensajesCount?: number;
 }
 
 export interface Message {

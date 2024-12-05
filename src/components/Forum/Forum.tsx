@@ -6,6 +6,7 @@ import { Topic, Message } from '../../types/forum';
 import { getTopics, getTopicMessages, createTopic, createMessage } from '../../services/forumService';
 import { auth } from '../../firebase';
 import toast from 'react-hot-toast';
+import { MessageSquare } from 'lucide-react';
 
 interface ForumProps {
   darkMode: boolean;
@@ -92,10 +93,11 @@ const Forum: React.FC<ForumProps> = ({ darkMode, setIsAuthModalOpen }) => {
 
   if (loading) {
     return (
-      <div className={`flex items-center justify-center h-64 ${
+      <div className={`flex flex-col items-center justify-center h-64 ${
         darkMode ? 'text-white' : 'text-gray-900'
       }`}>
-        Cargando foros...
+        <MessageSquare className="w-12 h-12 mb-4 animate-pulse" />
+        <p className="text-lg font-medium">Cargando foros...</p>
       </div>
     );
   }
