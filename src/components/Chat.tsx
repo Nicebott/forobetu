@@ -80,7 +80,7 @@ const Chat: React.FC<ChatProps> = ({ darkMode = false }) => {
     <>
       <button
         onClick={() => setIsChatOpen(!isChatOpen)}
-        className="fixed bottom-4 right-4 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition-colors z-50 flex items-center"
+        className="fixed bottom-4 right-4 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition-colors z-[60] flex items-center"
       >
         <MessageCircle size={24} />
         {!isChatOpen && unreadCount > 0 && (
@@ -91,7 +91,7 @@ const Chat: React.FC<ChatProps> = ({ darkMode = false }) => {
       </button>
 
       {isChatOpen && (
-        <div className={`fixed bottom-20 right-4 shadow-lg rounded-lg w-96 z-40 ${
+        <div className={`fixed bottom-20 right-4 shadow-lg rounded-lg w-96 z-[60] ${
           darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white'
         }`}>
           <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">

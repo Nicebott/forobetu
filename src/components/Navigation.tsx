@@ -1,5 +1,5 @@
 import React from 'react';
-import { GraduationCap, Menu, X, Moon, Sun, LogIn, UserCircle, HelpCircle, MessageSquare } from 'lucide-react';
+import { GraduationCap, Menu, X, Moon, Sun, LogIn, UserCircle, HelpCircle, MessageSquare, Package } from 'lucide-react';
 import ProfileDropdown from './ProfileDropdown';
 import { User } from 'firebase/auth';
 
@@ -19,6 +19,8 @@ interface NavigationProps {
   showFAQ: boolean;
   showForum: boolean;
   handleForumClick: () => void;
+  showMarketplace: boolean;
+  handleMarketplaceClick: () => void;
 }
 
 const Navigation: React.FC<NavigationProps> = ({
@@ -37,6 +39,8 @@ const Navigation: React.FC<NavigationProps> = ({
   showFAQ,
   showForum,
   handleForumClick,
+  showMarketplace,
+  handleMarketplaceClick,
 }) => {
   return (
     <header className={`${darkMode ? 'bg-gray-800' : 'bg-white'} shadow-md sticky top-0 z-50`}>
@@ -124,7 +128,7 @@ const Navigation: React.FC<NavigationProps> = ({
           <div className="flex flex-col md:flex-row md:items-center gap-1 p-2 md:p-0">
             <NavButton
               onClick={scrollToTop}
-              isActive={!selectedModality && !showFAQ && !showForum}
+              isActive={!selectedModality && !showFAQ && !showForum && !showMarketplace}
               darkMode={darkMode}
             >
               Inicio
@@ -142,6 +146,14 @@ const Navigation: React.FC<NavigationProps> = ({
               darkMode={darkMode}
             >
               SemiPresencial
+            </NavButton>
+            <NavButton
+              onClick={handleMarketplaceClick}
+              isActive={showMarketplace}
+              darkMode={darkMode}
+            >
+              <Package size={16} className="mr-1.5" />
+              Marketplace
             </NavButton>
             <NavButton
               onClick={handleForumClick}

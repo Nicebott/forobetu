@@ -1,7 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";  // Importa Firestore
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBGBb5vVEcrAJ2m6jm9-ZmX-wxYDTnb8VM",
@@ -19,8 +20,11 @@ const app = initializeApp(firebaseConfig);
 // Configura Realtime Database
 export const db = getDatabase(app);
 
-// Configura Firestore (para las reseñas)
+// Configura Firestore
 export const firestore = getFirestore(app);
 
 // Configura Firebase Authentication
 export const auth = getAuth(app);
+
+// Configura Firebase Storage
+export const storage = getStorage(app);

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { X, Star, ThumbsUp } from 'lucide-react';
+import { X, ThumbsUp } from 'lucide-react';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { firestore, auth } from '../firebase';
 import ReviewModal from './ReviewModal';
+import ReviewCard from './Reviews/ReviewCard';
+import ReviewStats from './Reviews/ReviewStats';
 
 interface Review {
   rating: number;
@@ -33,7 +35,7 @@ const ProfessorDetailsModal: React.FC<ProfessorDetailsModalProps> = ({
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [showReviewModal, setShowReviewModal] = useState(false);
-  const [averages, setAverages] = useState({
+  const [stats, setStats] = useState({
     rating: 0,
     clarity: 0,
     fairness: 0,
@@ -70,7 +72,7 @@ const ProfessorDetailsModal: React.FC<ProfessorDetailsModalProps> = ({
         });
 
         const count = reviewsData.length;
-        setAverages({
+        setStats({
           rating: Number((totals.rating / count).toFixed(1)),
           clarity: Number((totals.clarity / count).toFixed(1)),
           fairness: Number((totals.fairness / count).toFixed(1)),
@@ -93,46 +95,20 @@ const ProfessorDetailsModal: React.FC<ProfessorDetailsModalProps> = ({
 
   if (!isOpen) return null;
 
-  const RatingDisplay = ({ label, value }: { label: string; value: number }) => (
-    <div className="flex flex-col items-center">
-      <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-        {label}
-      </span>
-      <div className="flex items-center">
-        <span className={`text-lg font-bold mr-1 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-          {value.toFixed(1)}
-        </span>
-        <div className="flex">
-          {[2, 4, 6, 8, 10].map((star) => (
-            <Star
-              key={star}
-              size={16}
-              className={`${
-                star <= value
-                  ? 'text-yellow-400 fill-current'
-                  : darkMode
-                    ? 'text-gray-600'
-                    : 'text-gray-300'
-              }`}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className={`relative w-full max-w-2xl p-6 rounded-lg shadow-lg ${
-        darkMode ? 'bg-gray-800' : 'bg-white'
-      }`}>
+      <div className={`relative w-full max-w-4xl p-6 rounded-xl shadow-xl ${
+        darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white'
+      } max-h-[90vh] overflow-y-auto`}>
         <button
           onClick={onClose}
-          className={`absolute top-4 right-4 ${
-            darkMode ? 'text-gray-400 hover:text-gray-300' : 'text-gray-600 hover:text-gray-800'
-          }`}
+          className={`absolute top-4 right-4 p-2 rounded-lg ${
+            darkMode 
+              ? 'text-gray-400 hover:text-gray-300 hover:bg-gray-700' 
+              : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+          } transition-colors`}
         >
-          <X size={24} />
+          <X size={20} />
         </button>
 
         <div className="mb-6">
@@ -140,102 +116,52 @@ const ProfessorDetailsModal: React.FC<ProfessorDetailsModalProps> = ({
             {professorName}
           </h2>
           
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-4">
-            <RatingDisplay label="General" value={averages.rating} />
-            <RatingDisplay label="Claridad" value={averages.clarity} />
-            <RatingDisplay label="Justicia" value={averages.fairness} />
-            <RatingDisplay label="Puntualidad" value={averages.punctuality} />
-            <RatingDisplay label="Lo tomaría de nuevo" value={averages.wouldTakeAgain} />
-          </div>
-          
-          <div className={`text-sm mt-2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-            ({reviews.length} {reviews.length === 1 ? 'reseña' : 'reseñas'})
-          </div>
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="md:col-span-1">
+              <ReviewStats
+                stats={stats}
+                totalReviews={reviews.length}
+                darkMode={darkMode}
+              />
+              
+              {auth.currentUser && (
+                <button
+                  onClick={() => setShowReviewModal(true)}
+                  className={`mt-4 w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium ${
+                    darkMode
+                      ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                      : 'bg-blue-500 hover:bg-blue-600 text-white'
+                  } transition-colors duration-200`}
+                >
+                  <ThumbsUp size={18} />
+                  Calificar Profesor
+                </button>
+              )}
+            </div>
 
-          {auth.currentUser && (
-            <button
-              onClick={() => setShowReviewModal(true)}
-              className={`mt-4 flex items-center gap-2 px-4 py-2 rounded-md ${
-                darkMode
-                  ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                  : 'bg-blue-500 hover:bg-blue-600 text-white'
-              }`}
-            >
-              <ThumbsUp size={18} />
-              Calificar Profesor
-            </button>
-          )}
+            <div className="md:col-span-2">
+              {loading ? (
+                <div className={`text-center py-8 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                  Cargando reseñas...
+                </div>
+              ) : reviews.length > 0 ? (
+                <div className="space-y-6">
+                  {reviews.map((review, index) => (
+                    <ReviewCard
+                      key={index}
+                      review={review}
+                      darkMode={darkMode}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className={`text-center py-8 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                  No hay reseñas disponibles para este profesor.
+                </div>
+              )}
+            </div>
+          </div>
         </div>
-
-        {loading ? (
-          <div className={`text-center py-8 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-            Cargando reseñas...
-          </div>
-        ) : reviews.length > 0 ? (
-          <div className="space-y-4 max-h-96 overflow-y-auto">
-            {reviews.map((review, index) => (
-              <div
-                key={index}
-                className={`p-4 rounded-lg ${
-                  darkMode ? 'bg-gray-700' : 'bg-gray-50'
-                }`}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center">
-                    <span className={`font-medium mr-2 ${
-                      darkMode ? 'text-gray-200' : 'text-gray-700'
-                    }`}>
-                      {review.userName || 'Usuario Anónimo'}
-                    </span>
-                    <div className="flex">
-                      {[2, 4, 6, 8, 10].map((star) => (
-                        <Star
-                          key={star}
-                          size={16}
-                          className={`${
-                            star <= review.rating
-                              ? 'text-yellow-400 fill-current'
-                              : darkMode
-                                ? 'text-gray-600'
-                                : 'text-gray-300'
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                  <span className={`text-sm ${
-                    darkMode ? 'text-gray-400' : 'text-gray-500'
-                  }`}>
-                    {new Date(review.timestamp).toLocaleDateString()}
-                  </span>
-                </div>
-                
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-2">
-                  <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                    Claridad: {review.clarity}/10
-                  </div>
-                  <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                    Justicia: {review.fairness}/10
-                  </div>
-                  <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                    Puntualidad: {review.punctuality}/10
-                  </div>
-                  <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                    Lo tomaría de nuevo: {review.wouldTakeAgain}/10
-                  </div>
-                </div>
-                
-                <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                  {review.comment}
-                </p>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className={`text-center py-8 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-            No hay reseñas disponibles para este profesor.
-          </div>
-        )}
       </div>
 
       {showReviewModal && auth.currentUser && (
