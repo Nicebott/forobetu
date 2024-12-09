@@ -58,10 +58,10 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className={`relative w-full max-w-2xl h-[90vh] sm:h-auto mx-4 rounded-xl shadow-xl ${
+      <div className={`relative w-full max-w-2xl h-[90vh] mx-4 rounded-xl shadow-xl overflow-hidden ${
         darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white'
       }`}>
-        <div className="sticky top-0 z-10 flex items-center justify-between p-6 border-b border-gray-700 bg-inherit">
+        <div className="sticky top-0 z-20 flex items-center justify-between p-6 border-b border-gray-700 bg-inherit">
           <div>
             <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
               Calificar a {professorName}
@@ -82,12 +82,14 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
           </button>
         </div>
         
-        <div className="p-6">
-          <ReviewForm
-            onSubmit={handleSubmit}
-            darkMode={darkMode}
-            loading={loading}
-          />
+        <div className="flex flex-col h-[calc(100%-5rem)] overflow-hidden">
+          <div className="flex-1 overflow-y-auto p-6">
+            <ReviewForm
+              onSubmit={handleSubmit}
+              darkMode={darkMode}
+              loading={loading}
+            />
+          </div>
         </div>
       </div>
     </div>
