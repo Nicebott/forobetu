@@ -58,34 +58,37 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className={`relative w-full max-w-2xl p-6 rounded-xl shadow-xl ${
+      <div className={`relative w-full max-w-2xl h-[90vh] sm:h-auto mx-4 rounded-xl shadow-xl ${
         darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white'
       }`}>
-        <button
-          onClick={onClose}
-          className={`absolute top-4 right-4 p-2 rounded-lg ${
-            darkMode 
-              ? 'text-gray-400 hover:text-gray-300 hover:bg-gray-700' 
-              : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
-          } transition-colors`}
-        >
-          <X size={20} />
-        </button>
-        
-        <div className="mb-6">
-          <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-            Calificar a {professorName}
-          </h2>
-          <p className={`mt-2 text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-            Tu opinión ayuda a otros estudiantes a tomar mejores decisiones
-          </p>
+        <div className="sticky top-0 z-10 flex items-center justify-between p-6 border-b border-gray-700 bg-inherit">
+          <div>
+            <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+              Calificar a {professorName}
+            </h2>
+            <p className={`mt-2 text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              Tu opinión ayuda a otros estudiantes a tomar mejores decisiones
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className={`p-2 rounded-lg ${
+              darkMode 
+                ? 'text-gray-400 hover:text-gray-300 hover:bg-gray-700' 
+                : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+            } transition-colors`}
+          >
+            <X size={20} />
+          </button>
         </div>
         
-        <ReviewForm
-          onSubmit={handleSubmit}
-          darkMode={darkMode}
-          loading={loading}
-        />
+        <div className="p-6">
+          <ReviewForm
+            onSubmit={handleSubmit}
+            darkMode={darkMode}
+            loading={loading}
+          />
+        </div>
       </div>
     </div>
   );
